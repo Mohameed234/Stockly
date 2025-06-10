@@ -222,5 +222,10 @@
     .quick-action-btn span {
         font-weight: 500;
     }
+    .sidebar.collapsed .user-info{
+        padding: 0.3rem !important;
+        margin: 0rem !important;
+        margin-bottom: 1.5rem !important;
+    }
 </style>
 @endsection

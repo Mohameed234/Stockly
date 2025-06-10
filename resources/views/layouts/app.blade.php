@@ -20,11 +20,12 @@
 </head>
 <body class="font-sans antialiased">
     <div class="min-h-screen bg-gray-100">
+        @auth
         <!-- Sidebar -->
         <div class="sidebar">
             <div class="sidebar-header">
                 <div class="logo">
-                    <img src="{{ asset('images/logo no back.png') }}" alt="Stockly Logo">
+                    <img src="{{ asset('images/logo no back.png') }}" alt="Stockly Logo" class="logo-img">
                 </div>
                 <button class="sidebar-toggle" id="sidebarToggle">
                     <i class="fas fa-bars"></i>
@@ -43,13 +44,13 @@
                 </div>
 
                 <nav class="sidebar-nav">
-                    <a href="{{ route('dashboard') }}" class="nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                    <a href="{{ route('dashboard') }}" class="nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}" title="Dashboard">
                         <i class="fas fa-home"></i>
-                        <span>Dashboard</span>
+                        <span class="nav-text">Dashboard</span>
                     </a>
-                    <a href="{{ route('users.index') }}" class="nav-item {{ request()->routeIs('users.*') ? 'active' : '' }}">
+                    <a href="{{ route('users.index') }}" class="nav-item {{ request()->routeIs('users.*') ? 'active' : '' }}" title="Users">
                         <i class="fas fa-users"></i>
-                        <span>Users</span>
+                        <span class="nav-text">Users</span>
                     </a>
                 </nav>
             </div>
@@ -57,9 +58,9 @@
             <div class="sidebar-footer">
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <button type="submit" class="logout-btn">
+                    <button type="submit" class="logout-btn" title="Logout">
                         <i class="fas fa-sign-out-alt"></i>
-                        <span>Logout</span>
+                        <span class="nav-text">Logout</span>
                     </button>
                 </form>
             </div>
@@ -89,12 +90,16 @@
                     </button>
                 </div>
             </nav>
+        @endauth
 
             <!-- Page Content -->
             <main>
                 @yield('content')
             </main>
+
+        @auth
         </div>
+        @endauth
     </div>
 
     <style>
@@ -137,6 +142,29 @@
             width: var(--sidebar-collapsed-width);
         }
 
+        .sidebar.collapsed .logo {
+            display: none;
+        }
+
+        .sidebar.collapsed .nav-text,
+        .sidebar.collapsed .user-details {
+            display: none;
+        }
+
+        .sidebar.collapsed .nav-item,
+        .sidebar.collapsed .logout-btn {
+            justify-content: center;
+            padding: 0.875rem;
+        }
+
+        .sidebar.collapsed .user-info {
+            justify-content: center;
+            padding: 0.4rem;
+            background: var(--primary);
+            border-radius: 0.5rem;
+            /* margin: 0.5rem; */
+        }
+
         .sidebar-header {
             padding: 1.5rem;
             display: flex;
@@ -149,19 +177,15 @@
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary);
+            background: var(--dark);
+            padding: 0.5rem;
+            border-radius: 0.5rem;
         }
 
-        .logo img {
+        .logo-img {
             max-width: 180px;
             height: auto;
-            background-color: var(--dark);
-        }
-
-        .logo i {
-            font-size: 1.75rem;
+            transition: all 0.3s ease;
         }
 
         .sidebar-toggle {
@@ -181,7 +205,7 @@
 
         .sidebar-content {
             flex: 1;
-            padding: 1.5rem;
+            padding: 1rem;
             overflow-y: auto;
         }
 
@@ -199,12 +223,11 @@
             width: 40px;
             height: 40px;
             background: var(--primary);
-            color: var(--light);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.25rem;
+            color: var(--light);
         }
 
         .user-details {
@@ -220,7 +243,7 @@
 
         .user-role {
             font-size: 0.75rem;
-            color: #6c757d;
+            color: var(--dark-light);
             text-transform: capitalize;
         }
 
@@ -237,13 +260,12 @@
             padding: 0.875rem 1rem;
             color: var(--dark);
             text-decoration: none;
-            border-radius: 0.75rem;
+            border-radius: 0.5rem;
             transition: all 0.3s ease;
         }
 
         .nav-item:hover {
             background: var(--light-gray);
-            color: var(--primary);
         }
 
         .nav-item.active {
@@ -252,8 +274,14 @@
         }
 
         .nav-item i {
-            width: 1.5rem;
+            font-size: 1.25rem;
+            width: 24px;
             text-align: center;
+        }
+
+        .nav-text {
+            font-size: 0.875rem;
+            font-weight: 500;
         }
 
         .sidebar-footer {
@@ -269,9 +297,12 @@
             padding: 0.875rem 1rem;
             background: none;
             border: none;
-            color: #dc3545;
-            border-radius: 0.75rem;
+            color: var(--dark);
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-align: left;
             cursor: pointer;
+            border-radius: 0.5rem;
             transition: all 0.3s ease;
         }
 
@@ -286,7 +317,7 @@
             transition: all 0.3s ease;
         }
 
-        .main-content.expanded {
+        .sidebar.collapsed + .main-content {
             margin-left: var(--sidebar-collapsed-width);
         }
 
@@ -294,14 +325,14 @@
         .top-nav {
             height: var(--top-nav-height);
             background: var(--light);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid var(--light-gray);
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 0 1.5rem;
             position: sticky;
             top: 0;
-            z-index: 900;
+            z-index: 100;
         }
 
         .nav-left {
@@ -311,6 +342,7 @@
         }
 
         .menu-toggle {
+            display: none;
             background: none;
             border: none;
             color: var(--dark);
@@ -319,7 +351,6 @@
             padding: 0.5rem;
             border-radius: 0.5rem;
             transition: all 0.3s ease;
-            display: none;
         }
 
         .menu-toggle:hover {
@@ -329,11 +360,15 @@
         .search-box {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: 0.5rem;
             background: var(--light-gray);
             padding: 0.5rem 1rem;
-            border-radius: 0.75rem;
+            border-radius: 0.5rem;
             width: 300px;
+        }
+
+        .search-box i {
+            color: var(--dark-light);
         }
 
         .search-box input {
@@ -341,11 +376,12 @@
             border: none;
             outline: none;
             width: 100%;
+            font-size: 0.875rem;
             color: var(--dark);
         }
 
-        .search-box i {
-            color: #6c757d;
+        .search-box input::placeholder {
+            color: var(--dark-light);
         }
 
         .nav-right {
@@ -377,9 +413,13 @@
             background: var(--primary);
             color: var(--light);
             font-size: 0.75rem;
-            padding: 0.25rem 0.5rem;
-            border-radius: 1rem;
-            transform: translate(50%, -50%);
+            font-weight: 600;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         /* Responsive Styles */
@@ -415,25 +455,28 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const sidebar = document.querySelector('.sidebar');
-            const mainContent = document.querySelector('.main-content');
             const sidebarToggle = document.getElementById('sidebarToggle');
             const menuToggle = document.getElementById('menuToggle');
 
-            // Toggle sidebar on desktop
-            sidebarToggle.addEventListener('click', function() {
-                sidebar.classList.toggle('collapsed');
-                mainContent.classList.toggle('expanded');
-            });
+            if (sidebarToggle) {
+                sidebarToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('collapsed');
+                });
+            }
 
-            // Toggle sidebar on mobile
-            menuToggle.addEventListener('click', function() {
-                sidebar.classList.toggle('show');
-            });
+            if (menuToggle) {
+                menuToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('show');
+                });
+            }
 
             // Close sidebar when clicking outside on mobile
             document.addEventListener('click', function(event) {
                 if (window.innerWidth <= 1024) {
-                    if (!sidebar.contains(event.target) && !menuToggle.contains(event.target)) {
+                    const isClickInsideSidebar = sidebar.contains(event.target);
+                    const isClickOnMenuToggle = menuToggle.contains(event.target);
+
+                    if (!isClickInsideSidebar && !isClickOnMenuToggle && sidebar.classList.contains('show')) {
                         sidebar.classList.remove('show');
                     }
                 }
