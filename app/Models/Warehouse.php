@@ -4,7 +4,7 @@ namespace App\Models;
 
 use App\Traits\HasLogs;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Warehouse extends Model
 {
@@ -12,15 +12,14 @@ class Warehouse extends Model
 
     protected $fillable = [
         'name',
-        'location',
-        'item_id'
+        'location'
     ];
 
     /**
-     * Get the item in this warehouse.
+     * Get the items in this warehouse.
      */
-    public function item(): BelongsTo
+    public function items(): BelongsToMany
     {
-        return $this->belongsTo(Item::class);
+        return $this->belongsToMany(Item::class)->withPivot('quantity');
     }
 }

@@ -27,8 +27,8 @@
     </div>
 
     <!-- Stats Cards -->
-    <div class="d-flex justify-content-space-around flex-wrap mb-4 cards">
-        <div class="stat-card">
+    <div class="d-flex justify-content-space-around flex-wrap mb-4 cards" style="display: flex;">
+        <div class="stat-card clickable-stat-card" onclick="window.location.href='{{ route('users.index') }}'">
             <div class="stat-card-body">
                 <div class="stat-content">
                     <div class="stat-icon-wrapper">
@@ -46,7 +46,7 @@
                 </div>
             </div>
         </div>
-        <div class="stat-card">
+        <!-- <div class="stat-card">
             <div class="stat-card-body">
                 <div class="stat-content">
                     <div class="stat-icon-wrapper">
@@ -60,6 +60,81 @@
                 <div class="stat-progress">
                     <div class="progress">
                         <div class="progress-bar bg-success" style="width: 60%"></div>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+        <div class="stat-card clickable-stat-card" onclick="window.location.href='{{ route('items.index') }}'">
+            <div class="stat-card-body">
+                <div class="stat-content">
+                    <div class="stat-icon-wrapper">
+                        <i class="fas fa-box stat-icon"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h6 class="stat-label">Total Items</h6>
+                        <h3 class="stat-value">{{ \App\Models\Item::count() }}</h3>
+                    </div>
+                </div>
+                <div class="stat-progress">
+                    <div class="progress">
+                        <div class="progress-bar bg-info" style="width: 85%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="stat-card clickable-stat-card" onclick="window.location.href='{{ route('items.expiring') }}'">
+            <div class="stat-card-body">
+                <div class="stat-content">
+                    <div class="stat-icon-wrapper">
+                        <i class="fas fa-clock stat-icon"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h6 class="stat-label">Expiring Soon</h6>
+                        <h3 class="stat-value">{{ \App\Models\Item::whereNotNull('expire_date')
+                            ->where('expire_date', '<=', now()->addMonths(2))
+                            ->where('expire_date', '>', now())
+                            ->count() }}</h3>
+                    </div>
+                </div>
+                <div class="stat-progress">
+                    <div class="progress">
+                        <div class="progress-bar bg-warning" style="width: 70%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="stat-card clickable-stat-card" onclick="window.location.href='{{ route('items.received-today') }}'">
+            <div class="stat-card-body">
+                <div class="stat-content">
+                    <div class="stat-icon-wrapper">
+                        <i class="fas fa-arrow-right-to-bracket stat-icon"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h6 class="stat-label">Received Today</h6>
+                        <h3 class="stat-value">{{ \App\Models\Item::whereRaw('DATE(in_date) = CURDATE()')->count() }}</h3>
+                    </div>
+                </div>
+                <div class="stat-progress">
+                    <div class="progress">
+                        <div class="progress-bar bg-primary" style="width: 65%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="stat-card clickable-stat-card" onclick="window.location.href='{{ route('transfers.index') }}'">
+            <div class="stat-card-body">
+                <div class="stat-content">
+                    <div class="stat-icon-wrapper">
+                        <i class="fas fa-exchange-alt stat-icon"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h6 class="stat-label">Total Transfers</h6>
+                        <h3 class="stat-value">{{ \App\Models\StockMovement::count() }}</h3>
+                    </div>
+                </div>
+                <div class="stat-progress">
+                    <div class="progress">
+                        <div class="progress-bar bg-success" style="width: 55%"></div>
                     </div>
                 </div>
             </div>
@@ -84,6 +159,14 @@
                         <a href="{{ route('users.index') }}" class="quick-action-btn">
                             <i class="fas fa-users"></i>
                             <span>View All Users</span>
+                        </a>
+                        <a href="{{ route('transfers.create') }}" class="quick-action-btn">
+                            <i class="fas fa-exchange-alt"></i>
+                            <span>Create Transfer</span>
+                        </a>
+                        <a href="{{ route('transfers.index') }}" class="quick-action-btn">
+                            <i class="fas fa-list"></i>
+                            <span>View Transfers</span>
                         </a>
                     </div>
                 </div>
@@ -139,32 +222,43 @@
     .stat-card {
         background: var(--light);
         border-radius: 1rem;
-        padding: 1.5rem;
+        padding: 1.25rem;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         flex: 1;
-        min-width: 250px;
+        min-width: 200px;
+        max-width: 220px;
         margin: 0.5rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .stat-card-body {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
     }
 
     .stat-content {
         display: flex;
         align-items: center;
-        margin-bottom: 1rem;
+        margin-bottom: 0.75rem;
     }
 
     .stat-icon-wrapper {
-        width: 48px;
-        height: 48px;
+        width: 45px;
+        height: 45px;
         background: var(--primary-light);
-        border-radius: 12px;
+        border-radius: 10px;
         display: flex;
         align-items: center;
         justify-content: center;
-        margin-right: 1rem;
+        margin-right: 0.75rem;
     }
 
     .stat-icon {
-        font-size: 1.5rem;
+        font-size: 1.25rem;
         color: var(--light);
     }
 
@@ -183,6 +277,20 @@
         font-size: 1.5rem;
         font-weight: 600;
         margin: 0;
+    }
+
+    .stat-progress {
+        margin-top: auto;
+    }
+
+    .progress {
+        height: 6px;
+        border-radius: 3px;
+        background-color: var(--light-gray);
+    }
+
+    .progress-bar {
+        border-radius: 3px;
     }
 
     /* Quick Actions Styles */
@@ -222,6 +330,27 @@
     .quick-action-btn span {
         font-weight: 500;
     }
+
+    .clickable-stat-card {
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .clickable-stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        background: linear-gradient(135deg, var(--light) 0%, #f8f9fa 100%);
+    }
+
+    .clickable-stat-card:hover .stat-icon-wrapper {
+        background: var(--primary);
+        transform: scale(1.1);
+    }
+
+    .clickable-stat-card:hover .stat-value {
+        color: var(--primary);
+    }
+
     .sidebar.collapsed .user-info{
         padding: 0.3rem !important;
         margin: 0rem !important;

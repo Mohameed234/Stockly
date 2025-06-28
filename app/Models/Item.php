@@ -4,7 +4,8 @@ namespace App\Models;
 
 use App\Traits\HasLogs;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Item extends Model
 {
@@ -20,7 +21,8 @@ class Item extends Model
         'get_from',
         'get_to',
         'get_out_date',
-        'amount_get_in'
+        'amount_get_in',
+        'warehouse_id'
     ];
 
     protected $casts = [
@@ -34,8 +36,16 @@ class Item extends Model
     /**
      * Get the warehouse where this item is located.
      */
-    public function warehouse(): HasOne
+    public function warehouse(): BelongsTo
     {
-        return $this->hasOne(Warehouse::class);
+        return $this->belongsTo(Warehouse::class);
+    }
+
+    /**
+     * Get the warehouses where this item can be stored.
+     */
+    public function warehouses(): BelongsToMany
+    {
+        return $this->belongsToMany(Warehouse::class)->withPivot('quantity');
     }
 }

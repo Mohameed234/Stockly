@@ -33,7 +33,7 @@
             </div>
 
             <div class="sidebar-content">
-                <div class="user-info">
+                <a href="{{ route('profile.show') }}" class="user-info">
                     <div class="user-avatar">
                         <i class="fas fa-user"></i>
                     </div>
@@ -41,13 +41,27 @@
                         <h6 class="user-name">{{ Auth::user()->name }}</h6>
                         <span class="user-role">{{ Auth::user()->role }}</span>
                     </div>
-                </div>
+                </a>
 
                 <nav class="sidebar-nav">
                     <a href="{{ route('dashboard') }}" class="nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}" title="Dashboard">
                         <i class="fas fa-home"></i>
                         <span class="nav-text">Dashboard</span>
                     </a>
+                    <a href="{{ route('items.index') }}" class="nav-item {{ request()->routeIs('items.*') ? 'active' : '' }}" title="Items">
+                        <i class="fas fa-box"></i>
+                        <span class="nav-text">Items</span>
+                    </a>
+                    <div class="nav-group">
+                        <a href="{{ route('warehouses.index') }}" class="nav-item {{ request()->routeIs('warehouses.*') && !request()->routeIs('transfers.*') ? 'active' : '' }}" title="Warehouses">
+                            <i class="fas fa-warehouse"></i>
+                            <span class="nav-text">Warehouses</span>
+                        </a>
+                        <a href="{{ route('transfers.index') }}" class="nav-item {{ request()->routeIs('transfers.*') ? 'active' : '' }}" title="Transfers">
+                            <i class="fas fa-exchange-alt"></i>
+                            <span class="nav-text">Transfers</span>
+                        </a>
+                    </div>
                     <a href="{{ route('users.index') }}" class="nav-item {{ request()->routeIs('users.*') ? 'active' : '' }}" title="Users">
                         <i class="fas fa-users"></i>
                         <span class="nav-text">Users</span>
@@ -217,6 +231,25 @@
             background: var(--light-gray);
             border-radius: 0.75rem;
             margin-bottom: 1.5rem;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s ease;
+        }
+
+        .user-info:hover {
+            background: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(5, 127, 242, 0.2);
+        }
+
+        .user-info:hover .user-name,
+        .user-info:hover .user-role {
+            color: var(--light);
+        }
+
+        .user-info:hover .user-avatar {
+            background: var(--light);
+            color: var(--primary);
         }
 
         .user-avatar {
@@ -228,6 +261,7 @@
             align-items: center;
             justify-content: center;
             color: var(--light);
+            transition: all 0.3s ease;
         }
 
         .user-details {
@@ -449,6 +483,33 @@
             .search-box {
                 display: none;
             }
+        }
+
+        .nav-group {
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-sub-item {
+            margin-left: 1.5rem;
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            background: rgba(5, 127, 242, 0.05);
+            border-left: 3px solid var(--primary);
+        }
+
+        .nav-sub-item:hover {
+            background: rgba(5, 127, 242, 0.1);
+        }
+
+        .nav-sub-item.active {
+            background: var(--primary);
+            color: var(--light);
+        }
+
+        .sidebar.collapsed .nav-sub-item {
+            margin-left: 0;
+            padding: 0.5rem;
+            font-size: 0.75rem;
         }
     </style>
 
