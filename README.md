@@ -50,7 +50,6 @@ The system helps businesses manage items, stock movements, warehouses, and alert
 - MySQL
 - Blade (MVC)
 - Bootstrap or TailwindCSS
-- JavaScript / Axios
 
 ---
 
